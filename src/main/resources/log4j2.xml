@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="off" monitorInterval="120">
+    <properties>
+        <property name="LOG_HOME">/mytest_log</property>
+    </properties>
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <!--RollingFile 为全局同步 RandomAccessFile 为异步-->
+        <RollingFile name="rootAppeder"
+                                 fileName="${LOG_HOME}/houseTrace.log"
+                                 filePattern="${LOG_HOME}/$${date:yyyy-MM}/rattanapi-root-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %ex%msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <!--错误日志输出-->
+        <RollingFile name="errorAppeder"
+                                 fileName="${LOG_HOME}/houseTrace-error.log"
+                                 filePattern="${LOG_HOME}/$${date:yyyy-MM}/rattanapi-error-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %ex%msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+    </appenders>
+
+    <loggers>
+        <root level="info">
+            <!--根据配置文件是否打开 console输出 -->
+            <appender-ref ref="Console"/>
+            <appender-ref ref="rootAppeder"/>
+            <appender-ref ref="errorAppeder"/>
+        </root>
+    </loggers>
+
+</configuration>
